@@ -1,0 +1,57 @@
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+## Specific to RubyMotion/RubyMine/IntelliJ:
+.dat*
+.repl_history
+build/
+/.idea/
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/*
+# But not this file...
+!/doc/rototiller_class_graph.png
+/yard_docs/
+/yardstick/
+
+## Environment normalisation:
+/.bundle/
+/lib/bundler/man/
+
+# for a library or gem, you might want to ignore these files since the code is
+# intended to run in multiple environments; otherwise, check them in:
+# Gemfile.lock
+# .ruby-version
+# .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc
+
+# (beaker) log files
+acceptance/hosts.cfg
+junit/
+log/
+*.log
+empty.rb # empty test to be used with rake tasks so no acceptance tests are run
+
+# generated fixtures
+spec/fixtures
+
+# keys for eyaml
+keys
+hieradata/*.eyaml
+
+Gemfile.lock
+Gemfile.local
+
+/graphs
