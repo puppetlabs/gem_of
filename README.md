@@ -38,8 +38,8 @@ or:
 clone git@github.com:puppetlabs/gem_of.git
 cd gem_of
 bundle install
-be rake gem:build
-be rake gem:install:local
+bundle exec rake gem:build
+bundle exec rake gem:install:local
 ```
 
 ## In your Gemfile
