@@ -17,6 +17,7 @@ module GemOf
 
       # lint/unit tests
       gem "rake"
+      gem "gem_of"      # ensure downstream projects get gem_of for rake tasks
       gem "rototiller", "~> 1.0"
       gem "rspec",      "~> 3.4.0"
       gem "rubocop",    "~> 0.49.1" # used in tests. pinned
