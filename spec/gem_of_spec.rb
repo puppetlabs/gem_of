@@ -1,3 +1,5 @@
+require "spec_helper"
+
 describe GemOf::Gems do
   it "set_gem_versions should be private" do
     expect { described_class.new.set_gem_versions }
