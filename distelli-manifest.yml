@@ -12,6 +12,9 @@ slv/gem_of:
     - rvm install ruby-2.4.0
     - rvm use 2.4.0
     - gem install bundler
+    # FIXME: temporary, until we release the gem
+    - gem build gem_of.gemspec
+    - gem install --local gem_of-0.1.0.gem
 
   Build:
     - source ~/.rvm/scripts/rvm
