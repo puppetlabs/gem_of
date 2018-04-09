@@ -48,3 +48,11 @@ require 'gem_of'
 
 eval(GemOf::Gems.new, binding)
 ```
+
+## In your Rakefile
+gem_of distributes itself into your Gemfile, so if it's installed locally, as above, then the bundle for your other project will have it, and the rake tasks:
+```
+require "gem_of/rake_tasks"
+
+GemOf::RakeTasks.new
+```
