@@ -38,8 +38,8 @@ or:
 clone git@github.com:puppetlabs/gem_of.git
 cd gem_of
 bundle install
-be rake gem:build
-be rake gem:install:local
+bundle exec rake gem:build
+bundle exec rake gem:install:local
 ```
 
 ## In your Gemfile
@@ -47,4 +47,12 @@ be rake gem:install:local
 require 'gem_of'
 
 eval(GemOf::Gems.new, binding)
+```
+
+## In your Rakefile
+gem_of distributes itself into your Gemfile, so if it's installed locally, as above, then the bundle for your other project will have it, and the rake tasks:
+```
+require "gem_of/rake_tasks"
+
+GemOf::RakeTasks.new
 ```

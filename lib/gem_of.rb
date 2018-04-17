@@ -17,6 +17,7 @@ module GemOf
 
       # lint/unit tests
       gem "rake"
+      gem "gem_of"      # ensure downstream projects get gem_of for rake tasks
       gem "rototiller", "~> 1.0"
       gem "rspec",      "~> 3.4.0"
       gem "rubocop",    "~> 0.49.1" # used in tests. pinned
@@ -52,6 +53,10 @@ module GemOf
       HEREDOC
     end
 
+    # output the gem_code of this class as a string
+    #   implements both #to_str and #to_s for implicit conversions
+    # @return [String] of our gem_code
+    # @api public
     def to_str
       @gem_code
     end
@@ -60,10 +65,9 @@ module GemOf
     private
 
     # rubocop:disable Metrics/MethodLength
-    # @note public so bundler can find it when it evals return of #gems
     # Set instance params for the various gem versions we need based upon ruby
     #   should really only be used in above, will change, over time
-    # @api public
+    # @api private
     def set_gem_versions
       # restrict gems to enable ruby versions
 
