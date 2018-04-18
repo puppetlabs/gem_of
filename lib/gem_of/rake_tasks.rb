@@ -86,7 +86,8 @@ module GemOf
 
         desc "Clean/remove the generated YARD Documentation cache"
         task :clean do
-          sh "rm -rf #{YARD_DIR}"
+          rakefile_path = Rake.application.original_dir
+          FileUtils.rm_rf(File.join(rakefile_path, YARD_DIR))
         end
 
         desc "Tell me about YARD undocumented objects"
@@ -109,21 +110,25 @@ module GemOf
     # @private
     def arch_diagram
       original_dir = Dir.pwd
-      # this won't work all the time, and when it doesn't,
-      #   it still says we created a class diagram
-      # FIXME: use Rake.application.original_dir
-      # Dir.chdir(File.expand_path(File.dirname(__FILE__)))
+      # rake can be run from any dir under here
+      #   so we don't know where we are
+      #   yard graph needs access to the lib file tree, and you can't specify it
+      #   to yard.  so we need to chdir here.
+      # FIXME: this won't work from other dirs, because bundler complains it
+      #   can't find ./lib/gem_of.rb (from Gemfile)
       graph_processor = "dot"
       if exe_exists?(graph_processor)
+        rakefile_path = Rake.application.original_dir
+        Dir.chdir(rakefile_path)
         FileUtils.mkdir_p(DOCS_DIR)
         if system("yard graph --full | #{graph_processor} -Tpng " \
             "-o #{DOCS_DIR}/arch_graph.png")
           puts "we made you a class diagram: #{DOCS_DIR}/arch_graph.png"
         end
+        Dir.chdir(original_dir)
       else
         puts "ERROR: you don't have dot/graphviz; punting"
       end
-      Dir.chdir(original_dir)
     end
 
     # Cross-platform exe_exists?
