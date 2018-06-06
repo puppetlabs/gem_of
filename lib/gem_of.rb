@@ -17,7 +17,8 @@ module GemOf
 
       # lint/unit tests
       gem "rake"
-      gem "gem_of"      # ensure downstream projects get gem_of for rake tasks
+      # ensure downstream projects get gem_of for rake tasks
+      gem "gem_of",     #{location_of_interp(@gemof_version)}
       gem "rototiller", "~> 1.0"
       gem "rspec",      "~> 3.4.0"
       gem "rubocop",    "~> 0.49.1" # used in tests. pinned
@@ -31,14 +32,12 @@ module GemOf
       gem "coveralls",  require: false # used in tests
 
       group :system_tests do
-        gem "beaker",        GemOf.location_of(ENV["BEAKER_VERSION"] ||
-          "#{@beaker_version}")
+        gem "beaker",         #{location_of_interp(@beaker_version)}
         gem "beaker-hostgenerator"
-        gem "beaker-abs",    GemOf.location_for(ENV["BEAKER_ABS_VERSION"] ||
-          "~> 0.2")
-        gem "nokogiri"       ,"#{@nokogiri_version}"
-        gem "public_suffix"  ,"#{@public_suffix_version}"
-        #gem "activesupport" ,"#{@activesupport_version}"
+        gem "beaker-abs",     #{location_of_interp(@beaker_abs_version)}
+        gem "nokogiri",       "#{@nokogiri_version}"
+        gem "public_suffix",  "#{@public_suffix_version}"
+        #gem "activesupport", "#{@activesupport_version}"
       end
 
       local_gemfile = "Gemfile.local"
@@ -73,20 +72,34 @@ module GemOf
 
       @public_suffix_version = "~> 1" # any
       @activesupport_version = "~> 1" # any
+      @gemof_version         = ENV["GEMOF_VERSION"] || "~> 0" # any
+      @beaker_abs_version    = ENV["BEAKER_ABS_VERSION"] || "~> 0.2"
       #   nokogiri comes along for the ride but needs some restriction too
       if Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.1.6"),
                                                  Gem::Version.new("2.2.4"))
-        @beaker_version   = "<  3.9.0"
+        @beaker_version   = ENV["BEAKER_VERSION"] || "<  3.9.0"
         @nokogiri_version = "<  1.7.0"
       elsif Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
                                                     Gem::Version.new("2.1.5"))
-        @beaker_version   = "<  3.1.0"
+        @beaker_version   = ENV["BEAKER_VERSION"] || "<  3.1.0"
         @nokogiri_version = "<  1.7.0"
       else
-        @beaker_version   = "~> 3.0"
+        @beaker_version   = ENV["BEAKER_VERSION"] || "~> 3.0"
         @nokogiri_version = "~> 1" # any
       end
     end
+
+    def location_of_interp(place, fake_version = nil)
+      if place =~ /^(git:[^#]*)#(.*)/
+        [fake_version, { git: Regexp.last_match[1],
+                         branch: Regexp.last_match[2], :require => false }].compact
+      elsif place =~ %r{^file://(.*)}
+        "'>= 0', path: '#{File.expand_path(Regexp.last_match[1])}', :require => false"
+      else
+        "'#{place}', { :require => false }"
+      end
+    end
+
   end
 
   # string for use as parameter to the #gem method
@@ -100,11 +113,11 @@ module GemOf
   def location_of(place, fake_version = nil)
     if place =~ /^(git:[^#]*)#(.*)/
       [fake_version, { git: Regexp.last_match[1],
-                       branch: Regexp.last_match[2] }].compact
+                       branch: Regexp.last_match[2], :require => false }].compact
     elsif place =~ %r{^file:\/\/(.*)}
-      [">= 0", { path: File.expand_path(Regexp.last_match[1]) }]
+      [">= 0", { path: File.expand_path(Regexp.last_match[1]), :require => false }]
     else
-      [place]
+      [place, { :require => false }]
     end
   end
   alias            location_for   location_of # reverse compat
