@@ -92,14 +92,13 @@ module GemOf
     def location_of_interp(place, fake_version = nil)
       if place =~ /^(git:[^#]*)#(.*)/
         [fake_version, { git: Regexp.last_match[1],
-                         branch: Regexp.last_match[2], :require => false }].compact
+                         branch: Regexp.last_match[2], require: false }].compact
       elsif place =~ %r{^file://(.*)}
         "'>= 0', path: '#{File.expand_path(Regexp.last_match[1])}', :require => false"
       else
         "'#{place}', { :require => false }"
       end
     end
-
   end
 
   # string for use as parameter to the #gem method
@@ -113,11 +112,11 @@ module GemOf
   def location_of(place, fake_version = nil)
     if place =~ /^(git:[^#]*)#(.*)/
       [fake_version, { git: Regexp.last_match[1],
-                       branch: Regexp.last_match[2], :require => false }].compact
+                       branch: Regexp.last_match[2], require: false }].compact
     elsif place =~ %r{^file:\/\/(.*)}
-      [">= 0", { path: File.expand_path(Regexp.last_match[1]), :require => false }]
+      [">= 0", { path: File.expand_path(Regexp.last_match[1]), require: false }]
     else
-      [place, { :require => false }]
+      [place, { require: false }]
     end
   end
   alias            location_for   location_of # reverse compat

@@ -52,14 +52,13 @@ module GemOf
     def initialize
       namespace :docs do
         config = { "require_exact_threshold" => false,
-                   "rules"=>{"Summary::Length"=>{"enabled"=>false},
-                             "Summary::SingleLine"=>{"enabled"=>false},
-                             "ApiTag::Presence"=>{"enabled"=>false},
-                             "ApiTag::Inclusion"=>{"enabled"=>false},
-                             "ApiTag::ProtectedMethod"=>{"enabled"=>false},
-                             "ApiTag::PrivateMethod"=>{"enabled"=>false},
-                             "ExampleTag"=>{"enabled"=>false}
-                            } }
+                   "rules" => { "Summary::Length" => { "enabled" => false },
+                                "Summary::SingleLine" => { "enabled" => false },
+                                "ApiTag::Presence" => { "enabled" => false },
+                                "ApiTag::Inclusion" => { "enabled" => false },
+                                "ApiTag::ProtectedMethod" => { "enabled" => false },
+                                "ApiTag::PrivateMethod" => { "enabled" => false },
+                                "ExampleTag" => { "enabled" => false } } }
         desc "Measure YARD coverage. see yardstick/report.txt for output"
         require "yardstick/rake/measurement"
         Yardstick::Rake::Measurement.new(:measure, config) do |measurement|
@@ -168,14 +167,7 @@ module GemOf
       namespace :lint do
         desc "check number of lines of code changed. No long PRs"
         task "diff_length" do
-          max_length = 500
-          diff_len = diff_length
-          if diff_len < max_length
-            puts "diff length (#{diff_len}) is less than #{max_length} LoC"
-          else
-            puts "diff length (#{diff_len}) is more than #{max_length} LoC"
-            exit diff_len
-          end
+          log_diff_length_and_exit
         end
 
         # this will produce 'test:rubocop','test:rubocop:auto_correct' tasks
@@ -199,6 +191,18 @@ module GemOf
     end
 
     private
+
+    # @api private
+    def log_diff_length_and_exit
+      max_length = 500
+      diff_len = diff_length
+      if diff_len < max_length
+        puts "diff length (#{diff_len}) is less than #{max_length} LoC"
+      else
+        puts "diff length (#{diff_len}) is more than #{max_length} LoC"
+        exit diff_len
+      end
+    end
 
     # @api private
     def diff_length
