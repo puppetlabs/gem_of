@@ -168,7 +168,14 @@ module GemOf
       namespace :lint do
         desc "check number of lines of code changed. No long PRs"
         task "diff_length" do
-          diff_length? exit diff_length : exit
+          max_length = 500
+          diff_len = diff_length
+          if diff_len < max_length
+            puts "diff length (#{diff_len}) is less than #{max_length} LoC"
+          else
+            puts "diff length (#{diff_len}) is more than #{max_length} LoC"
+            exit diff_len
+          end
         end
 
         # this will produce 'test:rubocop','test:rubocop:auto_correct' tasks
@@ -195,18 +202,10 @@ module GemOf
 
     # @api private
     def diff_length
-      max_length = 150
       target_branch = ENV["DISTELLI_RELBRANCH"] || "master"
       diff_cmd = "git diff --numstat #{target_branch}"
       sum_cmd  = "awk '{s+=$1} END {print s}'"
-      diff_len = `#{diff_cmd} | #{sum_cmd}`.to_i
-      if diff_len < max_length
-        puts "diff length (#{diff_len}) is less than #{max_length} LoC"
-        return false
-      else
-        puts "diff length (#{diff_len}) is more than #{max_length} LoC"
-        return diff_len
-      end
+      `#{diff_cmd} | #{sum_cmd}`.to_i
     end
   end
 
