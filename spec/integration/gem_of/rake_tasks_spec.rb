@@ -69,7 +69,7 @@ describe GemOf do
   end
   it "module function #location_of should return unmodified if not git path" do
     expect(described_class.location_of("something random"))
-      .to eq ["something random"]
+      .to eq ["something random", { require: false }]
   end
   it "module function #location_of should return git repo and branch" do
     url = "git://git.com/puppetlabs/gem_of#somesha"
