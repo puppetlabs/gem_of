@@ -226,7 +226,7 @@ module GemOf
           require "rspec/core/rake_task"
           desc "Run unit tests"
           RSpec::Core::RakeTask.new do |t|
-            t.rspec_opts = ["--color"]
+            t.rspec_opts = ["--color --format documentation"]
             t.pattern = ENV["SPEC_PATTERN"]
           end
           # if rspec isn't available, we can still use this Rakefile
@@ -238,7 +238,7 @@ module GemOf
 
         desc "" # empty description so it doesn't show up in rake -T
         rototiller_task :check_spec do |t|
-          t.add_env(name: "SPEC_PATTERN", default: "spec/**/*",
+          t.add_env(name: "SPEC_PATTERN", default: "**{,/*/**}/*_spec.rb",
                     message: "The pattern RSpec will use to find tests")
         end
       end
