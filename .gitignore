@@ -23,6 +23,8 @@ build/
 !/doc/rototiller_class_graph.png
 /yard_docs/
 /yardstick/
+## no docs for now.  one of the rake tasks produces this dir
+/docs/
 
 ## Environment normalisation:
 /.bundle/
