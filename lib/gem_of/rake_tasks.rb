@@ -56,8 +56,10 @@ module GemOf
                                 "Summary::SingleLine" => { "enabled" => false },
                                 "ApiTag::Presence" => { "enabled" => false },
                                 "ApiTag::Inclusion" => { "enabled" => false },
-                                "ApiTag::ProtectedMethod" => { "enabled" => false },
-                                "ApiTag::PrivateMethod" => { "enabled" => false },
+                                "ApiTag::ProtectedMethod" =>
+                                  { "enabled" => false },
+                                "ApiTag::PrivateMethod" =>
+                                  { "enabled" => false },
                                 "ExampleTag" => { "enabled" => false } } }
         desc "Measure YARD coverage. see yardstick/report.txt for output"
         require "yardstick/rake/measurement"
