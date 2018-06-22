@@ -201,7 +201,7 @@ module GemOf
         puts "diff length (#{diff_len}) is less than #{max_length} LoC"
       else
         STDERR.puts "[E]: diff length (#{diff_len}) is more than \
-          #{max_length} LoC"
+                     #{max_length} LoC"
         exit diff_len
       end
     end

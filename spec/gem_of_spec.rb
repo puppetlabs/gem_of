@@ -17,7 +17,8 @@ describe GemOf do
     expect(described_class.method(:location_of) ==
             described_class.method(:location_for))
   end
-  it "module function #location_of should return unmodified if not git path" do
+  it "module function #location_of should return unmodified, \
+      with `require false` if not git path" do
     expect(described_class.location_of("something random"))
       .to eq "'something random', { :require => false }"
   end
