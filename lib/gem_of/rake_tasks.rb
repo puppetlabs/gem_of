@@ -59,8 +59,7 @@ module GemOf
                                 "ApiTag::ProtectedMethod" =>
                                   { "enabled" => false },
                                 "ApiTag::PrivateMethod" =>
-                                  { "enabled" => false },
-                                "ExampleTag" => { "enabled" => false } } }
+                                  { "enabled" => false } } }
         desc "Measure YARD coverage. see yardstick/report.txt for output"
         require "yardstick/rake/measurement"
         Yardstick::Rake::Measurement.new(:measure, config) do |measurement|
@@ -201,7 +200,8 @@ module GemOf
       if diff_len < max_length
         puts "diff length (#{diff_len}) is less than #{max_length} LoC"
       else
-        puts "diff length (#{diff_len}) is more than #{max_length} LoC"
+        STDERR.puts "[E]: diff length (#{diff_len}) is more than \
+          #{max_length} LoC"
         exit diff_len
       end
     end
