@@ -51,15 +51,28 @@ module GemOf
     # @example YardStackTasks.new
     def initialize
       namespace :docs do
+        config = { "require_exact_threshold" => false,
+                   "rules" => { "Summary::Length" => { "enabled" => false },
+                                "Summary::SingleLine" => { "enabled" => false },
+                                "ApiTag::Presence" => { "enabled" => false },
+                                "ApiTag::Inclusion" => { "enabled" => false },
+                                "ApiTag::ProtectedMethod" =>
+                                  { "enabled" => false },
+                                "ApiTag::PrivateMethod" =>
+                                  { "enabled" => false } } }
         desc "Measure YARD coverage. see yardstick/report.txt for output"
         require "yardstick/rake/measurement"
-        Yardstick::Rake::Measurement.new(:measure) do |measurement|
+        Yardstick::Rake::Measurement.new(:measure, config) do |measurement|
           measurement.output = "yardstick/report.txt"
+        end
+        task measure: [:measure_message] # another way to force a dependent task
+        desc "" # empty description so this doesn't show up in rake -T
+        task :measure_message do
+          puts "creating a report for you in yardstick/report.txt"
         end
 
         desc "Verify YARD coverage"
         require "yardstick/rake/verify"
-        config = { "require_exact_threshold" => false }
         Yardstick::Rake::Verify.new(:verify, config) do |verify|
           verify.threshold = 80
         end
@@ -155,7 +168,7 @@ module GemOf
       namespace :lint do
         desc "check number of lines of code changed. No long PRs"
         task "diff_length" do
-          diff_length? exit diff_length: exit
+          log_diff_length_and_exit
         end
 
         # this will produce 'test:rubocop','test:rubocop:auto_correct' tasks
@@ -181,19 +194,24 @@ module GemOf
     private
 
     # @api private
+    def log_diff_length_and_exit
+      max_length = 500
+      diff_len = diff_length
+      if diff_len < max_length
+        puts "diff length (#{diff_len}) is less than #{max_length} LoC"
+      else
+        STDERR.puts "[E]: diff length (#{diff_len}) is more than \
+                     #{max_length} LoC"
+        exit diff_len
+      end
+    end
+
+    # @api private
     def diff_length
-      max_length = 150
       target_branch = ENV["DISTELLI_RELBRANCH"] || "master"
       diff_cmd = "git diff --numstat #{target_branch}"
       sum_cmd  = "awk '{s+=$1} END {print s}'"
-      diff_len = `#{diff_cmd} | #{sum_cmd}`.to_i
-      if diff_len < max_length
-        puts "diff length (#{diff_len}) is less than #{max_length} LoC"
-        return
-      else
-        puts "diff length (#{diff_len}) is more than #{max_length} LoC"
-        return diff_len
-      end
+      `#{diff_cmd} | #{sum_cmd}`.to_i
     end
   end
 
@@ -210,7 +228,7 @@ module GemOf
           require "rspec/core/rake_task"
           desc "Run unit tests"
           RSpec::Core::RakeTask.new do |t|
-            t.rspec_opts = ["--color"]
+            t.rspec_opts = ["--color --format documentation"]
             t.pattern = ENV["SPEC_PATTERN"]
           end
           # if rspec isn't available, we can still use this Rakefile
@@ -222,7 +240,7 @@ module GemOf
 
         desc "" # empty description so it doesn't show up in rake -T
         rototiller_task :check_spec do |t|
-          t.add_env(name: "SPEC_PATTERN", default: "spec/",
+          t.add_env(name: "SPEC_PATTERN", default: "**{,/*/**}/*_spec.rb",
                     message: "The pattern RSpec will use to find tests")
         end
       end

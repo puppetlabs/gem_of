@@ -40,16 +40,39 @@ describe GemOf::DocsTasks do
   end
 end
 
+# rubocop:disable Metrics/BlockLength
 describe GemOf::LintTasks do
   let(:lint_tasks) { described_class.new }
   it "#diff_length should be private" do
     expect { lint_tasks.diff_length }.to raise_error(NoMethodError)
   end
-  # FIXME: move the two commands to their own methods, stub them out so we can
-  #   create failing/succeeding tests
-  it "outputs some valid diff length" do
-    expect { Rake.application.invoke_task "lint:diff_length" }
-      .to output(/diff length \(\d+\) is/).to_stdout
+  it "lint:diff_length should pass when under the threshold" do
+    allow(lint_tasks).to receive(:diff_length).and_return(14)
+    expect { lint_tasks.send(:log_diff_length_and_exit) }
+      .to output(/diff length \(\d+\) is less/).to_stdout
+  end
+  it "lint:diff_length should fail when over the threshold" do
+    allow(lint_tasks).to receive(:diff_length).and_return(1000)
+    begin
+      expect { lint_tasks.send(:log_diff_length_and_exit) }
+        .to output(/\[E\]: diff length \(\d+\) is more/).to_stderr
+      lint_tasks.send(:log_diff_length_and_exit)
+    # rubocop:disable Lint/HandleExceptions
+    rescue SystemExit
+    end
+  end
+  it "lint:diff_length should exit when over the threshold" do
+    allow(lint_tasks).to receive(:diff_length).and_return(1000)
+    expect { lint_tasks.send(:log_diff_length_and_exit) }
+      .to raise_exception(SystemExit)
+  end
+  it "lint:diff_length should exit with diffnum when over the threshold" do
+    allow(lint_tasks).to receive(:diff_length).and_return(1000)
+    begin
+      lint_tasks.send(:log_diff_length_and_exit)
+    rescue SystemExit => e
+      expect(e.status).to eq(1000)
+    end
   end
 end
 
@@ -58,30 +81,5 @@ describe GemOf::TestTasks do
     described_class.new
     expect { Rake.application.invoke_task "test:check_spec" }
       .to output(/overridden from system/).to_stdout
-  end
-end
-
-# module functions
-describe GemOf do
-  it "module function #location_of, #location_for should be aliases (equal)" do
-    expect(described_class.method(:location_of) ==
-            described_class.method(:location_for))
-  end
-  it "module function #location_of should return unmodified if not git path" do
-    expect(described_class.location_of("something random"))
-      .to eq ["something random"]
-  end
-  it "module function #location_of should return git repo and branch" do
-    url = "git://git.com/puppetlabs/gem_of#somesha"
-    expect(described_class.location_of(url)[0][:git])
-      .to eq "git://git.com/puppetlabs/gem_of"
-    expect(described_class.location_of(url)[0][:branch])
-      .to eq "somesha"
-  end
-  it "module function #location_of should return local file path: elements" do
-    expect(described_class.location_of("file://../somethingelse")[0])
-      .to eq ">= 0"
-    expect(described_class.location_of("file://../somethingelse")[1][:path])
-      .to match("somethingelse")
   end
 end
