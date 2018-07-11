@@ -28,7 +28,7 @@ module GemOf
       gem "flay",       "~> 2.10.0" # used in tests
       gem "flog",       "~> 4.6.0"  # used in tests
       gem "roodi",      "~> 5.0.0"  # used in tests
-      gem "rubycritic"
+      gem "reek",       "#{@reek_version}"
       gem "coveralls",  require: false # used in tests
 
       group :system_tests do
@@ -37,7 +37,9 @@ module GemOf
         gem "beaker-abs",     #{GemOf.location_of(@beaker_abs_version)}
         gem "nokogiri",       "#{@nokogiri_version}"
         gem "public_suffix",  "#{@public_suffix_version}"
-        #gem "activesupport", "#{@activesupport_version}"
+        gem "jwt",            "#{@jwt_version}"
+        gem "activesupport", "#{@activesupport_version}"
+        gem "fog-openstack", "#{@fog_openstack_version}"
       end
 
       local_gemfile = "Gemfile.local"
@@ -50,6 +52,14 @@ module GemOf
         eval(File.read(user_gemfile), binding)
       end
       HEREDOC
+      # rubucritic has trouble in older rubys because of transitive deps
+      unless Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
+                                                 Gem::Version.new("2.1.5"))
+        @gem_code += <<-HEREDOC
+          gem "rubycritic", "#{@rubycritic_version}"
+        HEREDOC
+      end
+
     end
 
     # output the gem_code of this class as a string
@@ -70,22 +80,30 @@ module GemOf
     def set_gem_versions
       # restrict gems to enable ruby versions
 
-      @public_suffix_version = "~> 1" # any
-      @activesupport_version = "~> 1" # any
-      @gemof_version         = ENV["GEMOF_VERSION"] || "~> 0" # any
-      @beaker_abs_version    = ENV["BEAKER_ABS_VERSION"] || "~> 0.2"
+      @public_suffix_version = "< 500" # any
+      @activesupport_version = "< 500" # any
+      @nokogiri_version      = "< 500" # any
+      @jwt_version           = "< 500" # any
+      @fog_openstack_version = "< 500" # any
+      @reek_version          = "< 500" # any
+      @rubycritic_version    = "< 500" # any
+      @gemof_version         = ENV["GEMOF_VERSION"] || "< 500" # any
+      @beaker_version        = ENV["BEAKER_VERSION"] || "< 500" # any
+      @beaker_abs_version    = ENV["BEAKER_ABS_VERSION"] || "< 500" # any
       #   nokogiri comes along for the ride but needs some restriction too
-      if Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.1.6"),
-                                                 Gem::Version.new("2.2.4"))
-        @beaker_version   = ENV["BEAKER_VERSION"] || "<  3.9.0"
-        @nokogiri_version = "<  1.7.0"
-      elsif Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
-                                                    Gem::Version.new("2.1.5"))
+      if Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
+                                                 Gem::Version.new("2.1.5"))
         @beaker_version   = ENV["BEAKER_VERSION"] || "<  3.1.0"
         @nokogiri_version = "<  1.7.0"
-      else
-        @beaker_version   = ENV["BEAKER_VERSION"] || "~> 3.0"
-        @nokogiri_version = "~> 1" # any
+        @jwt_version      = "<  2.0.0"
+        @activesupport_version = "<  5.0.0"
+        @fog_openstack_version = "<  0.1.23"
+        @reek_version          = "<  4.0.0"
+        @rubycritic_version    = "<  3.0.0"
+      elsif Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.1.6"),
+                                                    Gem::Version.new("2.2.4"))
+        @beaker_version   = ENV["BEAKER_VERSION"] || "<  3.9.0"
+        @nokogiri_version = "<  1.7.0"
       end
     end
   end
