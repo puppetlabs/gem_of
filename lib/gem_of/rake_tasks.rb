@@ -5,7 +5,7 @@ require "rubocop/rake_task"
 require "flog_task"
 require "flay_task"
 require "roodi_task"
-require 'reek/rake/task'
+require "reek/rake/task"
 
 module GemOf
   # a bunch of instances of other rake tasks
@@ -187,7 +187,7 @@ module GemOf
         # this will produce the 'lint:reek' task
         #   i am Reek
         Reek::Rake::Task.new do |t|
-            t.fail_on_error = false
+          t.fail_on_error = false
         end
         # this will produce the 'lint:rubycritic' task
         begin
@@ -244,7 +244,6 @@ module GemOf
             t.pattern = ENV["SPEC_PATTERN"]
           end
           # if rspec isn't available, we can still use this Rakefile
-          # rubocop:disable Lint/HandleExceptions
         rescue LoadError
         end
 

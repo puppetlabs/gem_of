@@ -8,6 +8,7 @@ module GemOf
   #   eval(GemOf.gems, binding)
   # @api public
   class Gems
+    # rubocop:disable Metrics/MethodLength
     def initialize
       set_gem_versions
 
@@ -54,12 +55,11 @@ module GemOf
       HEREDOC
       # rubucritic has trouble in older rubys because of transitive deps
       unless Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
-                                                 Gem::Version.new("2.1.5"))
+                                                     Gem::Version.new("2.1.5"))
         @gem_code += <<-HEREDOC
           gem "rubycritic", "#{@rubycritic_version}"
         HEREDOC
       end
-
     end
 
     # output the gem_code of this class as a string
@@ -73,7 +73,7 @@ module GemOf
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     # Set instance params for the various gem versions we need based upon ruby
     #   should really only be used in above, will change, over time
     # @api private
