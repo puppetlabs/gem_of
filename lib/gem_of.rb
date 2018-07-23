@@ -53,7 +53,7 @@ module GemOf
         eval(File.read(user_gemfile), binding)
       end
       HEREDOC
-      # rubucritic has trouble in older rubys because of transitive deps
+      # rubycritic has trouble in older rubys because of transitive deps
       unless Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
                                                      Gem::Version.new("2.1.5"))
         @gem_code += <<-HEREDOC
