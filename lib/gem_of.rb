@@ -23,7 +23,7 @@ module GemOf
       gem "rototiller", "~> 1.0"
       gem "rspec",      "~> 3.4.0"
       gem "rubocop",    "~> 0.49.1" # used in tests. pinned
-      gem "simplecov",  "~> 0.14.0" # used in tests
+      gem "simplecov",  "~> 0.16.0" # used in tests
       gem "yardstick",  "~> 0.9.0"  # used in tests
       gem "markdown",   "~> 0"
       gem "flay",       "~> 2.10.0" # used in tests
