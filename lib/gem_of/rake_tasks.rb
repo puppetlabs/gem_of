@@ -214,7 +214,8 @@ module GemOf
             t.rspec_opts = ["--color --format documentation"]
             t.pattern = ENV["SPEC_PATTERN"]
           end
-          # if rspec isn't available, we can still use this Rakefile
+        # if rspec isn't available, we can still use this Rakefile
+        # rubocop:disable Lint/HandleExceptions
         rescue LoadError
         end
 

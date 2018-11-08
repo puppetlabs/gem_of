@@ -71,6 +71,8 @@ module GemOf
     private
 
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     # Set instance params for the various gem versions we need based upon ruby
     #   should really only be used in above, will change, over time
     # @api private
