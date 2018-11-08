@@ -2,10 +2,6 @@ require "fileutils"
 require "rototiller"
 require "yard"
 require "rubocop/rake_task"
-require "flog_task"
-require "flay_task"
-require "roodi_task"
-require "reek/rake/task"
 
 module GemOf
   # a bunch of instances of other rake tasks
@@ -174,31 +170,6 @@ module GemOf
         # this will produce 'lint:rubocop','lint:rubocop:auto_correct' tasks
         RuboCop::RakeTask.new do |task|
           task.options = ["--debug"]
-        end
-
-        # this will produce the 'lint:flog' task
-        allowed_complexity = 585 # <cough!>
-        FlogTask.new :flog, allowed_complexity, %w[lib]
-        # this will produce the 'lint:flay' task
-        allowed_repitition = 0
-        FlayTask.new :flay, allowed_repitition, %w[lib]
-        # this will produce the 'lint:roodi' task
-        RoodiTask.new
-        # this will produce the 'lint:reek' task
-        #   i am Reek
-        Reek::Rake::Task.new do |t|
-          t.fail_on_error = false
-        end
-        # this will produce the 'lint:rubycritic' task
-        begin
-          require "rubycritic/rake_task"
-          RubyCritic::RakeTask.new do |task|
-            task.paths   = FileList["lib/**/*.rb"]
-          end
-          # if rubycritic isn't available (ruby 2.0),
-          # we can still use this Rakefile
-          # rubocop:disable Lint/HandleExceptions
-        rescue LoadError
         end
       end
     end
