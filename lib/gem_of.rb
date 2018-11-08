@@ -20,7 +20,7 @@ module GemOf
       gem "rake"
       # ensure downstream projects get gem_of for rake tasks
       gem "gem_of",     #{GemOf.location_of(@gemof_version)}
-      gem "rototiller", "~> 1.0"
+      gem "rototiller", #{GemOf.location_of(@rototiller_version)}
       gem "rspec",      "~> 3.4.0"
       gem "rubocop",    "~> 0.49.1" # used in tests. pinned
       gem "simplecov",  "~> 0.16.0" # used in tests
@@ -90,6 +90,7 @@ module GemOf
       @gemof_version         = ENV["GEMOF_VERSION"] || "< 500" # any
       @beaker_version        = ENV["BEAKER_VERSION"] || "< 500" # any
       @beaker_abs_version    = ENV["BEAKER_ABS_VERSION"] || "< 500" # any
+      @rototiller_version    = ENV["ROTOTILLER_VERSION"] || "< 500" # any
       #   nokogiri comes along for the ride but needs some restriction too
       if Gem::Version.new(RUBY_VERSION).between?(Gem::Version.new("2.0.0"),
                                                  Gem::Version.new("2.1.5"))
