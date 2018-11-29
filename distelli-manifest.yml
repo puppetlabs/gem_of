@@ -18,7 +18,5 @@ slv/gem_of:
     - rvm use 2.4.0
     - bundle install --without system_tests
     - bundle exec rake docs:verify
-    - bundle exec rake lint:flay
-    - bundle exec rake lint:flog
     - bundle exec rake lint:rubocop
     - bundle exec rake test:spec
